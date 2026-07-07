@@ -34,14 +34,21 @@ class LogMessage {
 }
 
 interface LogAppender {
+    boolean canHandle(LogMessage logMessage);
     void append(LogMessage logMessage);
 }
 
 class ConsoleAppender implements LogAppender {
     private String formatter;
+    private LogLevel minLevel;
 //    constructor
-    public ConsoleAppender(String formatter) {
+    public ConsoleAppender(String formatter,  LogLevel minLevel) {
         this.formatter = formatter;
+        this.minLevel = minLevel;
+    }
+    @Override
+    public boolean canHandle(LogMessage logMessage) {
+        return logMessage.getLevel().ordinal() >= minLevel.ordinal();
     }
     @Override
     public void append(LogMessage logMessage) {
@@ -51,8 +58,14 @@ class ConsoleAppender implements LogAppender {
 
 class FileAppender implements LogAppender {
     private String formatter;
-    public FileAppender(String formatter) {
+    private LogLevel minLevel;
+    public FileAppender(String formatter,  LogLevel minLevel) {
         this.formatter = formatter;
+        this.minLevel = minLevel;
+    }
+    @Override
+    public boolean canHandle(LogMessage logMessage) {
+        return logMessage.getLevel().ordinal() >= minLevel.ordinal();
     }
     @Override
     public void append(LogMessage logMessage) {
